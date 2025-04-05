@@ -1,0 +1,5 @@
+Modus,IoU,Dice Score
+baseline,0.9465,0.9725
+dropout,0.9465,0.9725
+lowlr,0.9465,0.9725
+diceloss,0.9465,0.9725

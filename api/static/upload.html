@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Segmentation API Upload</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    #dropzone {
+      width: 100%; padding: 40px; border: 2px dashed #aaa;
+      text-align: center; color: #888; cursor: pointer;
+    }
+    img { margin-top: 20px; max-width: 100%; }
+  </style>
+</head>
+<body>
+
+<h2>Upload ein Bild zur Segmentierung</h2>
+<div id="dropzone">📤 Ziehe ein Bild hierher oder klicke</div>
+<input type="file" id="fileInput" style="display:none;" accept="image/*" />
+<img id="output" alt="Vorhersage wird hier angezeigt" />
+
+<script>
+  const dropzone = document.getElementById("dropzone");
+  const fileInput = document.getElementById("fileInput");
+  const output = document.getElementById("output");
+
+  dropzone.onclick = () => fileInput.click();
+  dropzone.ondragover = (e) => e.preventDefault();
+  dropzone.ondrop = (e) => {
+    e.preventDefault();
+    handleFile(e.dataTransfer.files[0]);
+  };
+  fileInput.onchange = () => handleFile(fileInput.files[0]);
+
+  async function handleFile(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("http://127.0.0.1:8000/predict", {
+      method: "POST",
+      body: formData
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      output.src = URL.createObjectURL(blob);
+    } else {
+      alert("Fehler bei der Vorhersage.");
+    }
+  }
+</script>
+
+</body>
+</html>
